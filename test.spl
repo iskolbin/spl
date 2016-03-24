@@ -1,0 +1,73 @@
+# SPL tests
+# Comments can be only in the begining of the line
+
+# To do nothing use nop
+nop
+
+# Pushing values, .s command shows stack's content
+100 200 300 .s
+
+# Poping top can be done by using . (dot) command
+# Popped element written to stdout
+500 .
+
+# Simple arithmetics works
++ - .s
+
+# It's possible to push any token using quoting 
+100 200 '+ .s
+
+# Quoted command can be executed using eval
+eval .s
+
+# Clear entire stack using ;
+; 10 20 30 40 50 .s ; .s
+
+# To define new word use : command
+# It's mindful to clear stack before use this command
+# To supress words from evaluation you have to quote them
+# Let's define sqr command which squares top value
+; 'dup '* 'sqr :
+; 50 sqr .
+
+# You can use comparsion operators
+; 50 0 < .
+
+# Conditional evaluation is possible with if command
+# It takes value and if it's not false evals first arg ( otherwise -- second )
+# Like this
+; 50 dup 0 < 'neg 'nop if .
+; -50 dup 0 < 'neg 'nop if .
+
+# Let's implement abs function
+# Note using double quotation
+'implementing-abs-function .
+; 'dup 0 '< ''neg ''nop 'if 'abs :
+; 123 abs .
+; -123 abs .
+
+'implementing-decrement .
+; 'dup 1 '- '-- :
+ 
+# Recursive loop-like construction
+'recurrect-loop .
+; 'dup 1 '- 'range 'range-loop :
+; 'dup 0 '<= ''nop ''range-loop 'if 'range :
+
+10 range .s
+
+# It's possible to reverse stack
+reverse .s
+
+# And bunch of other stack based ops
+; 10 20 30 over .s
+; 10 20 30 dup .s
+; 10 20 30 rot .s
+
+# Let's write beloved factorial function
+; 'over '* 'swap -1 '+ 'swap 'over 1 '<= ''nop ''fact 'if 'fact :
+; 1 'fact 'swap 'drop 'factorial :
+10 factorial .
+
+# Halting VM is done by halt
+halt
